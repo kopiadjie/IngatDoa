@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Doa Assistant</title>
+<style>
+:root{--adult:#6b7280;--child:#38bdf8;--bg:#f8fafc;--text:#111827}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:var(--bg);color:var(--text)}
+.screen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.card{width:100%;max-width:420px;background:#fff;border-radius:24px;padding:24px;box-shadow:0 10px 30px rgba(0,0,0,.08)}
+.center{text-align:center}.hidden{display:none}
+input,button,textarea{width:100%;padding:14px;border-radius:14px;border:1px solid #d1d5db;font-size:16px}
+button{border:none;color:#fff;font-weight:700;cursor:pointer;margin-top:12px}
+#enterBtn{background:var(--adult)}
+#sendBtn{background:var(--adult)}
+.header{padding:18px;color:#fff;border-radius:0 0 24px 24px}
+.chat{padding:16px;height:55vh;overflow:auto}
+.bubble{padding:12px 14px;border-radius:18px;margin:8px 0;max-width:85%}
+.user{background:#e5e7eb;margin-left:auto}.bot{background:#f3f4f6}
+.footer{padding:16px;display:flex;gap:10px}.footer input{flex:1}
+.small{font-size:13px;color:#6b7280}
+</style>
+</head>
+<body>
+<div id="ageScreen" class="screen">
+ <div class="card center">
+  <h1>🕌 Doa Assistant</h1>
+  <p>Masukkan umur Anda</p>
+  <input id="ageInput" type="number" placeholder="Contoh: 12">
+  <button id="enterBtn" onclick="enterApp()">Masuk</button>
+  <p class="small">UI otomatis menyesuaikan usia</p>
+ </div>
+</div>
+<div id="appScreen" class="hidden">
+ <div id="header" class="header">
+  <h2 id="title">Doa Assistant</h2>
+  <div id="modeText"></div>
+ </div>
+ <div id="chat" class="chat">
+   <div class="bubble bot">Halo, ceritakan aktivitas Anda. Contoh: saya mau makan. Saya akan carikan doa yang relevan.</div>
+ </div>
+ <div class="footer">
+   <input id="msg" placeholder="Saya lagi ...">
+   <button id="sendBtn" onclick="sendMsg()">Kirim</button>
+ </div>
+</div>
+<script>
+const CONFIG={API_URL:'',TOKEN:'',MODEL:'',SYSTEM_PROMPT:`Anda adalah asisten doa harian yang akurat, sopan, ringkas, dan tidak mengarang dalil. Tugas Anda: identifikasi aktivitas atau kondisi pengguna, lalu berikan doa/dzikir yang relevan jika ada. Format jawaban: 1) Judul 2) Arab (jika ada) 3) Latin 4) Arti singkat 5) Saran singkat. Jika tidak ada doa spesifik, berikan nasihat baik tanpa mengklaim hadis.`};
+let mode='adult';
+function enterApp(){
+ const age=parseInt(document.getElementById('ageInput').value||0);
+ mode=age>0 && age<18?'child':'adult';
+ applyTheme();
+ document.getElementById('ageScreen').classList.add('hidden');
+ document.getElementById('appScreen').classList.remove('hidden');
+}
+function applyTheme(){
+ const color=mode==='child'?'#38bdf8':'#6b7280';
+ document.getElementById('header').style.background=color;
+ document.getElementById('sendBtn').style.background=color;
+ document.getElementById('enterBtn').style.background=color;
+ document.getElementById('modeText').innerText=mode==='child'?'Mode Anak-anak':'Mode Dewasa';
+ document.getElementById('title').innerText=mode==='child'?'Doa Assistant Kids':'Doa Assistant';
+ document.body.style.background=mode==='child'?'#e0f2fe':'#f3f4f6';
+}
+function addBubble(text,who){const d=document.createElement('div');d.className='bubble '+who;d.innerText=text;document.getElementById('chat').appendChild(d);document.getElementById('chat').scrollTop=99999;}
+async function sendMsg(){
+ const msg=document.getElementById('msg').value.trim(); if(!msg)return;
+ addBubble(msg,'user'); document.getElementById('msg').value='';
+ if(!CONFIG.API_URL){addBubble('API belum diisi. Isi API_URL, TOKEN, dan MODEL pada file ini. Prompt sistem sudah disiapkan.','bot');return;}
+ try{
+  const res=await fetch(CONFIG.API_URL,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+CONFIG.TOKEN},body:JSON.stringify({model:CONFIG.MODEL,message:msg,mode,system_prompt:CONFIG.SYSTEM_PROMPT})});
+  const data=await res.json();
+  addBubble(data.reply||'Tidak ada balasan','bot');
+ }catch(e){addBubble('Gagal menghubungi AI API.','bot');}
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Doa Assistant - Temukan Doa Harianmu</title>
+    <meta name="description" content="Asisten AI untuk membantu Anda menemukan doa-doa harian Islam dengan mudah dan cepat.">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div id="ageScreen" class="screen">
+        <div class="card">
+            <h1>🕌</h1>
+            <h1>Doa Assistant</h1>
+            <p>Assalamu'alaikum! Masukkan usia Anda untuk menyesuaikan pengalaman.</p>
+            <div class="input-container" style="background: white; margin-bottom: 1rem;">
+                <input id="ageInput" type="number" placeholder="Contoh: 25" min="1" max="100">
+            </div>
+            <button onclick="enterApp()" style="background: var(--secondary); width: 100%;">Mulai Sekarang</button>
+        </div>
+    </div>
+
+    <div id="appScreen" class="screen hidden">
+        <header>
+            <h2><span>🕌</span> Doa Assistant</h2>
+            <div id="modeBadge" style="font-size: 0.7rem; background: var(--bg); padding: 4px 10px; border-radius: 20px; font-weight: 700;">DEWASA</div>
+        </header>
+
+        <main id="chatArea">
+            <div class="bubble bot">
+                <div class="doa-card">
+                    <p>Assalamu'alaikum! Saya asisten doa Anda. Apa yang sedang Anda lakukan atau rasakan saat ini?</p>
+                    <p class="doa-note">Contoh: "Saya mau makan", "Saya sedang sedih", atau "Doa untuk orang tua".</p>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <div class="input-container">
+                <input id="msgInput" type="text" placeholder="Ketik aktivitas Anda..." onkeypress="handleKeyPress(event)">
+                <button id="sendBtn" onclick="sendMsg()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                </button>
+            </div>
+        </footer>
+    </div>
+
+    <!-- JS -->
+    <script src="/static/app.js"></script>
+</body>
+</html>
